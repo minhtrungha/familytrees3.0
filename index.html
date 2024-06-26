@@ -36,7 +36,7 @@
             flex-wrap: wrap;
             padding: 20px;
             height: 16vh;
-            background-image: url("vsabanner.png");
+            background-image: url("./vsabanner.png");
             background-position: left;
             background-size: cover;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
@@ -74,7 +74,7 @@
             }
             header {
                 margin-bottom: 15px;
-                background-image: url("smallbanner.png");
+                background-image: url("./smallbanner.png");
                 background-position: center;
                 height: 13vh;
             }
@@ -177,7 +177,6 @@
     <header>
     </header>
     <form id="search-form">
-        
         <div class="search">
             <input class="search-input" type="search" placeholder="Enter a name...">
             <span class="search-icon material-symbols-outlined">search</span>
@@ -191,259 +190,253 @@
         </a>
     </footer>
     <script>
-function renderTree(treeData, container, treeNumber, searchText) {
-    const svg = d3.select(container).append("svg")
-        .attr("style", "width: 90%; height: 70vh;");
+        function renderTree(treeData, container, treeNumber, searchText) {
+            const svg = d3.select(container).append("svg")
+                .attr("style", "width: 90%; height: 70vh;");
 
-    setTimeout(() => {
-        const svgWidth = svg.node().getBoundingClientRect().width;
-        const svgHeight = svg.node().getBoundingClientRect().height;
-        const max_depth = findMaxDepth(treeData);
-        const nokids = countLeaves(treeData);
-        const screenWidth = window.innerWidth;
-        const isMobile = screenWidth < 768;
-        const initialScale = isMobile ? 0.5 : 1;
-        const width = isMobile ? max_depth*110:max_depth*250;
-        const height = isMobile ? nokids*58:nokids*80;
+            setTimeout(() => {
+                const svgWidth = svg.node().getBoundingClientRect().width;
+                const svgHeight = svg.node().getBoundingClientRect().height;
+                const max_depth = findMaxDepth(treeData);
+                const nokids = countLeaves(treeData);
+                const screenWidth = window.innerWidth;
+                const isMobile = screenWidth < 768;
+                const initialScale = isMobile ? 0.5 : 1;
+                const width = isMobile ? max_depth * 110 : max_depth * 250;
+                const height = isMobile ? nokids * 58 : nokids * 80;
 
-        const margin = { top: 20, right: 120, bottom: 30, left: 120 };
-        const g = svg.append("g");
+                const margin = { top: 20, right: 120, bottom: 30, left: 120 };
+                const g = svg.append("g");
 
-        const zoom = d3.zoom()
-            .scaleExtent([0.20, 2])
-            .on("zoom", function (event) {
-            g.attr("transform", event.transform);
-        });
+                const zoom = d3.zoom()
+                    .scaleExtent([0.20, 2])
+                    .on("zoom", function (event) {
+                        g.attr("transform", event.transform);
+                    });
 
-        svg.call(zoom);
+                svg.call(zoom);
 
-        const treeLayout = d3.tree()
-            .size([height,width]);
+                const treeLayout = d3.tree()
+                    .size([height, width]);
 
-        const root = d3.hierarchy(treeData);
-        
-        treeLayout(root);
+                const root = d3.hierarchy(treeData);
 
-        g.selectAll(".link")
-            .data(root.links())
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", d3.linkHorizontal()
-                .x(d => d.y)
-                .y(d => d.x))
-            .attr("fill", "none")
-            .attr("stroke", "#555")
-            .attr("stroke-width", "1.5px");
+                treeLayout(root);
 
-        const node = g.selectAll(".node")
-            .data(root.descendants())
-            .enter().append("g")
-            .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
-            .attr("transform", d => `translate(${d.y},${d.x})`);
+                g.selectAll(".link")
+                    .data(root.links())
+                    .enter().append("path")
+                    .attr("class", "link")
+                    .attr("d", d3.linkHorizontal()
+                        .x(d => d.y)
+                        .y(d => d.x))
+                    .attr("fill", "none")
+                    .attr("stroke", "#555")
+                    .attr("stroke-width", "1.5px");
 
-        const newRadius= isMobile ? 3 : 4.5;
+                const node = g.selectAll(".node")
+                    .data(root.descendants())
+                    .enter().append("g")
+                    .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+                    .attr("transform", d => `translate(${d.y},${d.x})`);
 
-        node.append("circle")
-            .attr("r", newRadius)
-            .attr("fill", d => d.children ? "#555" : "#999");
+                const newRadius = isMobile ? 3 : 4.5;
 
-        node.each(function(d) {
-        const nodeText = d3.select(this).append("text")
-            .attr("dy", "-.25em")
-            .attr("x", d => d.children ? -12 : 12)
-            .style("text-anchor", d => d.children ? "end" : "start")
-            .style("font-size", "12px");
+                node.append("circle")
+                    .attr("r", newRadius)
+                    .attr("fill", d => d.children ? "#555" : "#999");
 
-        const nameDetails = d.data.name.split(', ');
-        const fullName = nameDetails[0];
-        const additionalInfo = nameDetails.slice(1).join(', ');
-        const nameFontSize = isMobile ? "10px" : "20px";
-        const additionalInfoFontSize = isMobile ? "6px" : "12px";
-        const newY = isMobile ? "9": "18";
+                node.each(function (d) {
+                    const nodeText = d3.select(this).append("text")
+                        .attr("dy", "-.25em")
+                        .attr("x", d => d.children ? -12 : 12)
+                        .style("text-anchor", d => d.children ? "end" : "start")
+                        .style("font-size", "12px");
 
-        nodeText.append("tspan")
-            .style("font-size", nameFontSize)
-            .html(highlightText(fullName, searchText));
+                    const nameDetails = d.data.name.split(', ');
+                    const fullName = nameDetails[0];
+                    const additionalInfo = nameDetails.slice(1).join(', ');
+                    const nameFontSize = isMobile ? "10px" : "20px";
+                    const additionalInfoFontSize = isMobile ? "6px" : "12px";
+                    const newY = isMobile ? "9" : "18";
 
-    if(additionalInfo) {
-        nodeText.append("tspan")
-            .attr("x", d => d.children ? -14 : 14)
-            .attr("dy", newY)
-            .style("font-size", additionalInfoFontSize)
-            .text(additionalInfo);
-    }
-    });
+                    nodeText.append("tspan")
+                        .style("font-size", nameFontSize)
+                        .html(highlightText(fullName, searchText));
 
-        const bounds = g.node().getBBox();
-        const offsetX = (svgWidth - bounds.width) / 2 - bounds.x;
-        const offsetY = (svgHeight - bounds.height) / 2 - bounds.y;
+                    if (additionalInfo) {
+                        nodeText.append("tspan")
+                            .attr("x", d => d.children ? -14 : 14)
+                            .attr("dy", newY)
+                            .style("font-size", additionalInfoFontSize)
+                            .text(additionalInfo);
+                    }
+                });
 
-        g.attr("transform", `translate(${offsetX},${offsetY})`);
+                const bounds = g.node().getBBox();
+                const offsetX = (svgWidth - bounds.width) / 2 - bounds.x;
+                const offsetY = (svgHeight - bounds.height) / 2 - bounds.y;
 
-        zoom.on("zoom", function (event) {
-            g.attr("transform", event.transform);
-        });
-        const initialTransform = d3.zoomIdentity.translate(offsetX, offsetY);
-        svg.call(zoom.transform, initialTransform);
+                g.attr("transform", `translate(${offsetX},${offsetY})`);
 
-        const fullscreenIcon = svg.append('g')
-            .attr('transform', `translate(${svgWidth - 40}, ${svgHeight - 40})`)
-            .style('cursor', 'pointer')
-            .attr('class', 'fullscreen-icon')
-            .on('click', () => {
-        window.location.href = `/Tree${treeData.id}`;
-    });
+                zoom.on("zoom", function (event) {
+                    g.attr("transform", event.transform);
+                });
+                const initialTransform = d3.zoomIdentity.translate(offsetX, offsetY);
+                svg.call(zoom.transform, initialTransform);
 
-        positionFullscreenIcon(svg, fullscreenIcon);
+                const fullscreenIcon = svg.append('g')
+                    .attr('transform', `translate(${svgWidth - 40}, ${svgHeight - 40})`)
+                    .style('cursor', 'pointer')
+                    .attr('class', 'fullscreen-icon')
+                    .on('click', () => {
+                        window.location.href = `/Tree${treeData.id}`;
+                    });
 
-        window.addEventListener('resize', () => positionFullscreenIcon(svg, fullscreenIcon));
+                positionFullscreenIcon(svg, fullscreenIcon);
 
-        fullscreenIcon.append('circle')
-            .attr('r', 20)
-            .attr('fill', 'rgb(211,211,211)')
-            .attr('class', 'fullscreenCircle')
-            .attr('stroke-width', '1');
+                window.addEventListener('resize', () => positionFullscreenIcon(svg, fullscreenIcon));
 
-        fullscreenIcon.append('text')
-            .attr('class', 'icon material-icons')
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'central')
-            .attr('font-family', 'Material Icons')
-            .attr('font-size', 40)
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('transform', 'translate(108, 0)')
-            .attr('fill', '#717272')
-            .text('fullscreen'); 
+                fullscreenIcon.append('circle')
+                    .attr('r', 20)
+                    .attr('fill', 'rgb(211,211,211)')
+                    .attr('class', 'fullscreenCircle')
+                    .attr('stroke-width', '1');
 
-        svg
-            .on('mouseover', function() {
-                svg.style("border-color", '#787a7a');
-        })
-            .on('mouseout', function() {
-                svg.style("border-color", 'rgb(211,211,211)');
-        });
-        d3.selectAll('.fullscreen-icon').each(function() {
-    d3.select(this)
-        .on('mouseover', function() {
-            // Apply hover effect to this specific icon
-            d3.select(this).select('.fullscreenCircle')
-                .attr('stroke', '#787a7a')
-                .attr('stroke-width', '2');
-            d3.select(this).select('.icon')
-                .attr('fill','#4d4e4e');
-        })
-        .on('mouseout', function() {
-            // Revert hover effect for this specific icon
-            d3.select(this).select('.fullscreenCircle')
-                .attr('stroke', null)
-                .attr('stroke-width', null);
-            d3.select(this).select('.icon')
-                .attr('fill','#717272');
-        });
-});
-    }, 0);
-}
+                fullscreenIcon.append('text')
+                    .attr('class', 'icon material-icons')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'central')
+                    .attr('font-family', 'Material Icons')
+                    .attr('font-size', 40)
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('transform', 'translate(108, 0)')
+                    .attr('fill', '#717272')
+                    .text('fullscreen');
 
-function adjustHeaderHeight() {
-    var header = document.querySelector('header');
-    var isMobile = window.innerWidth < 768;
-
-    if (isMobile) {
-        if (window.innerWidth > window.innerHeight) {
-            header.style.height = '30vh';
-        } else {
-            header.style.height = '13vh';
+                svg
+                    .on('mouseover', function () {
+                        svg.style("border-color", '#787a7a');
+                    })
+                    .on('mouseout', function () {
+                        svg.style("border-color", 'rgb(211,211,211)');
+                    });
+                d3.selectAll('.fullscreen-icon').each(function () {
+                    d3.select(this)
+                        .on('mouseover', function () {
+                            // Apply hover effect to this specific icon
+                            d3.select(this).select('.fullscreenCircle')
+                                .attr('stroke', '#787a7a')
+                                .attr('stroke-width', '2');
+                            d3.select(this).select('.icon')
+                                .attr('fill', '#4d4e4e');
+                        })
+                        .on('mouseout', function () {
+                            // Revert hover effect for this specific icon
+                            d3.select(this).select('.fullscreenCircle')
+                                .attr('stroke', null)
+                                .attr('stroke-width', null);
+                            d3.select(this).select('.icon')
+                                .attr('fill', '#717272');
+                        });
+                });
+            }, 0);
         }
-    }
-}
 
-adjustHeaderHeight();
+        function adjustHeaderHeight() {
+            var header = document.querySelector('header');
+            var isMobile = window.innerWidth < 768;
 
-window.addEventListener('resize', adjustHeaderHeight);
-
-function positionFullscreenIcon(svg, fullscreenIcon) {
-    const svgRect = svg.node().getBoundingClientRect();
-    const iconX = svgRect.width - 40;
-    const iconY = svgRect.height - 40;
-
-    fullscreenIcon.attr('transform', `translate(${iconX}, ${iconY})`);
-}
-
-function countLeaves(node) {
-  if (!node.children || node.children.length === 0) {
-    return 1;
-  }
-  return node.children.reduce((sum, child) => sum + countLeaves(child), 0);
-}
-
-function findMaxDepth(node) {
-  if (!node.children || node.children.length === 0) {
-    return 1;
-  } else {
-    return 1 + Math.max(...node.children.map(findMaxDepth));
-  }
-}
-
-document.querySelector('header').addEventListener('click', () => {
-    window.location.href = '/';
-});
-
-function highlightText(fullText, query) {
-    const queryLower = query.toLowerCase();
-    const fullTextLower = fullText.toLowerCase();
-    const startIndex = fullTextLower.indexOf(queryLower);
-
-    if (startIndex !== -1 && query) {
-        const before = fullText.substring(0, startIndex);
-        const match = fullText.substring(startIndex, startIndex + query.length);
-        const after = fullText.substring(startIndex + query.length);
-        return `${before}<tspan style="font-weight: bold; fill: black;">${match}</tspan>${after}`;
-    }
-    return fullText;
-}
-
-
-        
-function treeContainsSearchText(treeData, searchText) {
-    function searchTree(node) {
-        const namePart = node.name.split(',')[0].toLowerCase();
-
-        if (namePart.includes(searchText.toLowerCase())) {
-            return true;
+            if (isMobile) {
+                if (window.innerWidth > window.innerHeight) {
+                    header.style.height = '30vh';
+                } else {
+                    header.style.height = '13vh';
+                }
+            }
         }
-        if (node.children) {
-            return node.children.some(child => searchTree(child));
+
+        adjustHeaderHeight();
+
+        window.addEventListener('resize', adjustHeaderHeight);
+
+        function positionFullscreenIcon(svg, fullscreenIcon) {
+            const svgRect = svg.node().getBoundingClientRect();
+            const iconX = svgRect.width - 40;
+            const iconY = svgRect.height - 40;
+
+            fullscreenIcon.attr('transform', `translate(${iconX}, ${iconY})`);
         }
-        return false;
-    }
-    return searchTree(treeData);
-}
 
+        function countLeaves(node) {
+            if (!node.children || node.children.length === 0) {
+                return 1;
+            }
+            return node.children.reduce((sum, child) => sum + countLeaves(child), 0);
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('.search-input');
+        function findMaxDepth(node) {
+            if (!node.children || node.children.length === 0) {
+                return 1;
+            } else {
+                return 1 + Math.max(...node.children.map(findMaxDepth));
+            }
+        }
 
-    function fetchAndDisplayTrees(searchText = '') {
-        fetch('/family-tree-data')
-            .then(response => response.json())
-            .then(data => {
-                const filteredData = data.filter(tree => treeContainsSearchText(tree, searchText));
-                d3.selectAll("svg").remove();
-                filteredData.forEach((treeData) => renderTree(treeData, '#trees-container', treeData.id, searchText));
-            })
-            .catch(error => console.error('Error fetching family tree data:', error));
-    }
-    fetchAndDisplayTrees('');
+        document.querySelector('header').addEventListener('click', () => {
+            window.location.href = '/';
+        });
 
-    searchInput.addEventListener('input', function() {
-        const searchText = this.value.trim().toLowerCase();
-        fetchAndDisplayTrees(searchText);
-    });
-});
+        function highlightText(fullText, query) {
+            const queryLower = query.toLowerCase();
+            const fullTextLower = fullText.toLowerCase();
+            const startIndex = fullTextLower.indexOf(queryLower);
 
-        </script>
-        
-        
+            if (startIndex !== -1 && query) {
+                const before = fullText.substring(0, startIndex);
+                const match = fullText.substring(startIndex, startIndex + query.length);
+                const after = fullText.substring(startIndex + query.length);
+                return `${before}<tspan style="font-weight: bold; fill: black;">${match}</tspan>${after}`;
+            }
+            return fullText;
+        }
+
+        function treeContainsSearchText(treeData, searchText) {
+            function searchTree(node) {
+                const namePart = node.name.split(',')[0].toLowerCase();
+
+                if (namePart.includes(searchText.toLowerCase())) {
+                    return true;
+                }
+                if (node.children) {
+                    return node.children.some(child => searchTree(child));
+                }
+                return false;
+            }
+            return searchTree(treeData);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('.search-input');
+
+            function fetchAndDisplayTrees(searchText = '') {
+                fetch('/family-tree-data')
+                    .then(response => response.json())
+                    .then(data => {
+                        const filteredData = data.filter(tree => treeContainsSearchText(tree, searchText));
+                        d3.selectAll("svg").remove();
+                        filteredData.forEach((treeData) => renderTree(treeData, '#trees-container', treeData.id, searchText));
+                    })
+                    .catch(error => console.error('Error fetching family tree data:', error));
+            }
+            fetchAndDisplayTrees('');
+
+            searchInput.addEventListener('input', function () {
+                const searchText = this.value.trim().toLowerCase();
+                fetchAndDisplayTrees(searchText);
+            });
+        });
+    </script>
 </body>
 </html>
