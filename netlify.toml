@@ -1,0 +1,19 @@
+[build]
+  publish = "." # This should be the directory containing your static files. Adjust if needed.
+  command = "npm install && npm run build" # Adjust as needed based on your project structure.
+
+[build.environment]
+  NODE_VERSION = "14" # Ensure this matches your node version in package.json
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-node-modules"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
