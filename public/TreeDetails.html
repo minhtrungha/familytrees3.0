@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Details - UMCP VSA Family Trees</title>
+    <link rel="stylesheet" href="https://egkoppel.github.io/product-sans/google-fonts.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: auto;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            overflow-y: auto;
+        }
+
+        body {
+            font-family: serif;
+            color: #1d1d1d;
+            line-height: 1.6;
+        }
+
+        header {
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            padding: 20px;
+            height:16vh;
+            background-image: url("vsabanner.png");
+            background-position: left;
+            background-size: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            
+    }
+
+        @media (max-width: 768px) {
+            header{
+                margin-bottom:5px;
+                background-image: url("smallbanner.png");
+                background-position: center;
+                height:13vh;
+            }
+            .node circle{
+                stroke-width: 1px;
+            }
+            .link{
+                stroke-width: 1.5px;
+            }
+            svg{
+                height:90%;
+            }
+        }
+        
+        
+        .node circle {
+            fill: #7bc868;
+            stroke: #276228;
+            stroke-width: 3px;
+        }
+
+        .svgContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100vh - 100px);
+            background-color: #f0f0f0;
+        }
+
+        svg {
+            width: 93%; 
+            height: 90%; 
+            border: 3px solid lightgray;
+            border-radius:30px;
+            align-self: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    </header>
+    <div class="svgContainer">
+    </div>
+    <script src="TreeDetails.js"></script>
+</body>
+</html>
