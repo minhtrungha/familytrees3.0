@@ -54,7 +54,7 @@ const server = app.listen(port, () => {
 });
 
 function fetchAndUpdateFamilyTreeData() {
-    const javaApiUrl = `https://familytreewebsite-411906.appspot.com/family-tree-data`;
+    const javaApiUrl = `https://tranquil-river-33770-f9a139e391dd.herokuapp.com/family-tree-data`;
     return axios.get(javaApiUrl, { responseType: 'text' })
         .then(response => {
             console.log('Received data from Java API:', response.data);
