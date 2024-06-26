@@ -7,13 +7,18 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.use(express.static(join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
 let familyTreeData = {};
 
+// Root route to serve the main HTML file
+app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'index.html'));
+});
+
 app.get('/Tree:treeNumber', (req, res) => {
     const treeID = req.params.treeNumber;
-    res.sendFile(join(__dirname, 'public', `TreeDetails.html`));
+    res.sendFile(join(__dirname, 'TreeDetails.html'));
 });
 
 app.post('/update-family-tree-data', (req, res) => {
@@ -46,8 +51,7 @@ app.get('/count', (req, res) => {
     res.send(treeCounts.join('\n'));
 });
 
-
-const port = process.env.PORT || 1542;
+const port = process.env.PORT || 1512;
 const server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     checkJavaConnection();
@@ -96,4 +100,5 @@ function parseDigraphsToD3Trees(digraphString) {
     });
     return trees;
 }
+
 export default app;
