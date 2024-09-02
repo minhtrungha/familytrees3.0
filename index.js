@@ -1,7 +1,7 @@
 import express from 'express';
-import axios from 'axios';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -9,7 +9,9 @@ const __dirname = dirname(__filename);
 
 app.use(express.static(__dirname));
 
-let familyTreeData = {};
+// Read and parse the family tree data from a JSON file
+const rawFamilyTreeData = fs.readFileSync(join(__dirname, 'familyTreeData.json'), 'utf8');
+const familyTreeData = parseDigraphsToD3Trees(JSON.parse(rawFamilyTreeData));
 
 // Root route to serve the main HTML file
 app.get('/', (req, res) => {
@@ -19,13 +21,6 @@ app.get('/', (req, res) => {
 app.get('/Tree:treeNumber', (req, res) => {
     const treeID = req.params.treeNumber;
     res.sendFile(join(__dirname, 'TreeDetails.html'));
-});
-
-app.post('/update-family-tree-data', (req, res) => {
-    console.log('Manual update triggered');
-    fetchAndUpdateFamilyTreeData()
-        .then(() => res.status(200).send('Family tree data updated successfully'))
-        .catch(error => res.status(500).send(`Error updating family tree data: ${error.message}`));
 });
 
 app.get('/family-tree-data', (req, res) => {
@@ -51,42 +46,15 @@ app.get('/count', (req, res) => {
     res.send(treeCounts.join('\n'));
 });
 
-const port = process.env.PORT || 1512;
-const server = app.listen(port, () => {
+const port = process.env.PORT || 4445;
+app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
-    checkJavaConnection();
 });
 
-function fetchAndUpdateFamilyTreeData() {
-    const javaApiUrl = `https://tranquil-river-33770-f9a139e391dd.herokuapp.com/family-tree-data`;
-    return axios.get(javaApiUrl, { responseType: 'text' })
-        .then(response => {
-            console.log('Received data from Java API:', response.data);
-            familyTreeData = parseDigraphsToD3Trees(response.data);
-        })
-        .catch(error => {
-            console.error('Error connecting to Java API:', error);
-            throw error;
-        });
-}
-
-function checkJavaConnection() {
-    fetchAndUpdateFamilyTreeData()
-        .catch(error => {
-            if (error.response) {
-                console.error('Error details:', error.response.status, error.response.data);
-            }
-        })
-        .finally(() => {
-            setTimeout(checkJavaConnection, 60000);
-        });
-}
-
-function parseDigraphsToD3Trees(digraphString) {
-    const trees = JSON.parse(digraphString);
+// Function to parse the data into a D3-friendly format
+function parseDigraphsToD3Trees(trees) {
     trees.forEach((tree, index) => {
         tree.id = `${index}`;
-
         const namesSet = new Set();
         const extractNames = (node) => {
             let fullName = node.name.split(',')[0].trim();
@@ -100,5 +68,3 @@ function parseDigraphsToD3Trees(digraphString) {
     });
     return trees;
 }
-
-export default app;

@@ -172,7 +172,6 @@ fullscreenIcon.append('circle')
     .attr('font-size', 40)
     .attr('x', 0)
     .attr('y', 0) 
-    .attr('transform', 'translate(168, 0)')
     .attr('fill', '#717272') 
     .text('fullscreen_exit');
 
